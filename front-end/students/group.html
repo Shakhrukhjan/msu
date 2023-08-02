@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<head>
+  <style >
+    
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  text-align: center;
+}
+
+table td {
+  vertical-align: middle;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-group > button {
+  margin-right: 10px;
+}
+</style>
+</head>
+
+<header>
+  <nav b-iiwfwaudm8 class="navbar navbar-expand-lg navbar-light bg-light">
+    <div b-iiwfwaudm8 class="container-fluid">
+        <button b-iiwfwaudm8 class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span b-iiwfwaudm8 class="navbar-toggler-icon"></span>
+        </button>
+        <div b-iiwfwaudm8 class="collapse navbar-collapse" id="navbarText">
+            <ul b-iiwfwaudm8 class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li b-iiwfwaudm8 class="nav-item">
+                    <a class="nav-link active" id="mybutton" aria-current="page" onclick="location.href = 'group.html'" style="cursor: pointer;">Группы</a>
+                </li>
+                <li b-iiwfwaudm8 class="nav-item">
+                    <a class="nav-link " aria-current="page"  style="cursor: pointer;" onclick="location.href = 'subjects.html'">Предметы</a>
+                </li>
+                <li b-iiwfwaudm8 class="nav-item">
+                    <a class="nav-link " aria-current="page" style="cursor: pointer;" onclick="location.href = 'scholarship.html'" >Вид стипедии</a>
+                </li>
+                <li b-iiwfwaudm8 class="nav-item">
+                    <a class="nav-link " aria-current="page" style="cursor: pointer;"  onclick="location.href = 'faculties.html'" >Факультеты</a>
+                </li>
+            </ul>
+        </div>
+        <form method="get">
+          <div class="input-group">
+            <input type="search" id="search"  placeholder="Поиск" name="search" type="text" class="form-control form-control-sm" />
+            <button type="button" onclick="getSearchValue()"  class="btn btn-outline-success">
+              <i class="fa fa-magnifying-glass"></i> найти
+            </button>
+          </div> 
+          <p id="search-result"></p>
+      </form>
+    </div>
+</nav>
+</header>
+
+
+<body>
+  <br>
+ <center><h1>Таблица группы</h1></center>
+  <div class="container">
+    <br>
+    <br>
+    <table class="table"  id="iu">
+      <thead>
+        <tr>  
+            <th scope="col" id="ids">№</th>
+            <th scope="col"><center>Группа</center></th>
+            <th scope="col">Факультет</th>
+            <th scope="col">Год создания</th>
+            <th score="col"> <center>Действия</center> </th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+      </tbody>
+    </table>
+  </div>
+</body>
+<script > 
+       const group = async () => {
+  try {
+    const response = await fetch("http://localhost:8080/get/students/groups", {
+      method: 'GET'
+    })
+    const responseJson = await response.json();
+
+    let tableBody = document.getElementById("tableBody");
+
+    const data = responseJson.mess;
+    console.log(data)
+
+    data.forEach(async (stud) => {
+      tableBody.innerHTML += `<tr>
+            <th>${stud.id}</th> 
+            <td>${stud.number}</td>
+            <td>${stud.name}</td>
+            <td>${stud.year_Creat}</td>
+            <td>
+  <div class="btn-group btn-group-sm" role="group">
+    &nbsp &nbsp
+    <button type="button" class="btn btn-outline-primary"  onclick="print('${stud.id}','${stud.number}', '${stud.name}', '${stud.year_Creat}')">
+      Изменить   
+      <i class="fa-solid fa-gift"></i>
+    </button> &nbsp &nbsp
+    <button  type="button" class="btn btn-outline-danger"   onclick="confirmDelete(${stud.id})">
+    Удалить
+      <i class="fa-solid fa-clock-rotate-left"></i>
+    </button>&nbsp &nbsp
+  
+  </div>
+</td>
+          </tr>`
+    })
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+group();
+
+</script>
+</html>

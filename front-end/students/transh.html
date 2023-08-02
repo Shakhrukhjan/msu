@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<head>
+  <style >
+    
+    table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+tr.dark-green {
+  background-color: #bbcbbb;
+  color: #fff;
+}
+
+tr.light-green {
+  background-color: #bad5ba;
+}
+
+tr.yellow {
+  background-color: #85b18d;
+}
+    </style>
+</head>
+<body>
+  <div style="position: fixed; bottom: 20px; right: 20px;">
+    <button  onclick="location.href = 'addTransh.html'" style="border-radius: 100%; background-color: #4CAF50; color: white; padding: 13px 25px; font-size: 30px; border: none; cursor: pointer;">+</button>
+  </div>
+  <br>
+ <center><h1>Список всех действий студента</h1></center>
+  <div class="container">
+    <br>  
+    <br>
+    <table class="table"  id="iu">
+      <thead>
+          <tr>  
+              <th scope="col"><center>Сумма</center></th> </th> 
+            <th score="col"> <center>Дата получения</center> </th>
+            <th score="col"> <center>Действия</center> </th>
+
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+      </tbody>
+    </table>
+  </div>
+</body>
+<script>
+ var k=1; 
+const getTransh = async () => {
+  try {
+    const response = await fetch("http://localhost:8080/get/students/transh", {
+      method: 'GET'
+    })
+    const responseJson = await response.json();
+    let tableBody = document.getElementById("tableBody");
+    const data = responseJson.mes;
+    console.log(data)
+     data.forEach(async (stud) => {
+      const date = new Date(stud.date);
+      const formattedDate = date.toLocaleString('ru-RU', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+      });
+      
+      let rowClass = ""; // Set default row class
+      
+       var myArray = ["dark-green", "light-green", "dark-green",  "light-green"]
+      
+       rowClass = myArray[k-1];
+       if (k===4) {
+          k=0;
+       }
+       k++
+       console.log(rowClass)
+      tableBody.innerHTML += `<tr class="${rowClass}">
+             <td style="color:black"><center>${stud.summa} сомони</center></td>
+            <td style="color:black"><center>${formattedDate} </center></td>
+            <td>
+              <center> 
+          <div class="btn-group btn-group-sm" role="group">
+           <button type="button" class="btn btn-outline-primary" >
+              Изменить   
+              <i class="fa-solid fa-gift"></i>
+            </button> &nbsp &nbsp      
+            <button  type="button" class="btn btn-outline-danger"   onclick="confirmDelete(${stud.id})">
+            Удалить
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </button>
+          </div>
+        </center>
+        </td>
+          </tr>`
+     })
+  } catch (e) {
+    console.log(e)
+  }
+}
+getTransh();
+const confirmDelete = async (id) => {
+  if (confirm("Вы уверены, что хотите удалить эту запись'?")) {
+    try {
+      const response = await fetch("http://localhost:8080/delete/transh/" + id, {
+        method: 'DELETE'
+      })
+      const responseJson = await response.json();
+      let tableBody = document.getElementById("tableBody");
+      const data = responseJson.message;
+      console.log(data)
+    }
+    catch (e) {
+      console.log(e)
+    }
+    location.href = 'transh.html';
+  }
+}
+
+</script>
+ </html>

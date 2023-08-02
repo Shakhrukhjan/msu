@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+<head> 
+   <style rel="stylesheet" href="./style.css"> </style>
+</head>
+<br>
+ 
+
+  <center>
+    <div class="marquee-container">
+      <div class="marquee-element"></div>
+      <div class="marquee-element" id="my-element"></div>
+
+    </div>
+
+
+  </center>
+  <div style="position: fixed; bottom: 20px; right: 20px;">
+    <button onclick="t()"
+      style="border-radius: 100%; background-color: #4CAF50; color: white; padding: 9px 21px; font-size: 30px; border: none; cursor: pointer;">+</button>
+  </div>
+  <div style="position: fixed; bottom:20px;  left: 22px;">
+    <button
+      style="border-radius: 50%;  background-color: #1ddb1d; color: white; padding: 7px 16px; font-size: 30px; border: none; cursor: pointer;"
+      onclick="showText()">
+      <center><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+          class="bi bi-patch-check" viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+          <path
+            d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911l-1.318.016z" />
+        </svg></center>
+    </button>
+  </div>
+  <div class="container">
+    <br>
+    <br>
+    <table class="table" id="iu">
+      <thead>
+        <tr>
+          <th scope="col" id="ids">№</th>
+          <th scope="col">
+            <center>Название предмета</center>
+          </th>
+          <th scope="col">Семестр</th>
+          <th scope="col">Тип занятия</th>
+          <th scope="col">Оценка</th>
+          <th scope="col">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Действия </th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+      </tbody>
+
+    </table>
+
+    <div class="d-grid ">
+      <button type="button" onclick="result()" class="btn btn-outline-secondary">Нажмите, чтобы узнать, какой тип стипендии
+        получает этот студент</button>
+    </div>
+    <br>
+    
+    <div class="d-grid ">
+      <button type="button" onclick="location.href='showScholarship.html'" class="btn btn-outline-success">Вид стипендии</button>
+    </div>
+
+  </div>
+</body>
+<script>
+  function showText() {
+    if (confirm("Вы действительно хотите оформить стипендию для этого студента?")) {
+      showResult();
+    }
+  }
+
+function t() {
+  location.href = 'create_subjects.html';
+}
+  var fio = new URLSearchParams(window.location.search).get('fio');
+
+  function myFunction() {
+    var str = `<div class="marquee-element"><h5>Успеваемость</h5><h3>#</h3></div> 
+  `;
+    return str.replace("#", fio);
+  }
+
+  function p() {
+    var elem = document.getElementById("block_1");
+    if (elem.style.display === "none") {
+      elem.style.display = "block";
+    } else {
+      elem.style.display = "none";
+    }
+  }
+
+  function myFunc() {
+    getSubjects(fio);
+  }
+  document.getElementById("my-element").innerHTML = myFunction();
+  var newId = 1;
+  var grd ;
+  const getSubjects = async (fio) => {
+    try {
+      const response = await fetch("http://localhost:8080/get/students/subjects", {
+        method: 'GET'
+      })
+      const responseJson = await response.json();
+      let tableBody = document.getElementById("tableBody");
+      const data = responseJson.msg;
+      data.forEach((subject) => {
+        if (subject.fio === fio) {
+          switch(parseInt(subject.grade)) {
+             case 0: 
+                grd = "незачет"
+                break;
+             case 1:
+                grd = "зачет"
+                break;
+             case 3:
+                grd = "удовлетворительно"
+                break;
+             case 4:
+                grd = "хорошо"
+                break;
+             case 5:
+                grd = 'отлично'
+                break;
+          }
+          tableBody.innerHTML += `<tr>
+        <td scope="row"><b>${newId}</b></td>
+        <td>${subject.name}</td>
+        <td>${subject.semester}</td>
+        <td>${subject.types}</td>
+        <td>${grd}</td>
+        <td>
+  <div class="btn-group btn-group-sm" role="group">
+    &nbsp &nbsp
+    <button type="button" class="btn btn-outline-primary"  onclick="Init('${subject.id}', '${subject.name}', '${subject.semester}', '${subject.types}', '${subject.grade}');" >
+      Изменить   
+      <i class="fa-solid fa-gift"></i>
+    </button> &nbsp &nbsp
+    <button  type="button" class="btn btn-outline-danger" onclick = deleteSubject(${subject.id})>
+    Удалить
+      <i class="fa-solid fa-clock-rotate-left"></i>
+    </button>
+  </div>
+</td>
+        </tr>`
+          newId++;
+        }
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  myFunc();
+
+
+  var t;
+
+  function Init(w, a, b, c, d) {
+    localStorage.setItem("id", w);
+    localStorage.setItem("name", a);
+    localStorage.setItem("semester", b);
+    localStorage.setItem("types", c);
+    localStorage.setItem("grade", d);
+    console.log(w, a, b, c, d);
+    t = w
+    location.href = 'update_subject.html';
+  }
+
+  // delete subjects
+
+  function deleteSubject(id) {
+    sdelete(id);
+  }
+  const sdelete = async (id) => {
+    if (confirm("Вы уверены, что хотите удалить этого студента?")) {
+      try {
+        const response = await fetch("http://localhost:8080/delete/subject/" + id, {
+          method: 'DELETE'
+        })
+        const responseJson = await response.json();
+        let tableBody = document.getElementById("tableBody");
+        const data = responseJson.message;
+        console.log(data)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
+  
+  // Нажмите, чтобы узнать, какой тип стипендии получает этот студент
+  var sumGrade, one, zero, countGrade;
+  let res;
+  const get = async (fio) => {
+    try {
+      const response = await fetch("http://localhost:8080/get/students/subjects", {
+        method: 'GET'
+      })
+      const responseJson = await response.json();
+      let tableBody = document.getElementById("tableBody");
+      const data = responseJson.msg;
+      sumGrade = 0;
+      zero = 0;
+      one = 0, countGrade = 0;
+      res = 0;
+      data.forEach((subject) => {
+        if (subject.fio === fio) {
+          if (subject.grade > 1) {
+            sumGrade += subject.grade;
+            countGrade++;
+          } else if (subject.grade === 0) {
+            zero++;
+          } else {
+            one++;
+          } 
+        }
+      })          
+      var resultGrade = sumGrade / countGrade;
+      if (resultGrade >= 3 && resultGrade <= 3.5 && zero === 0) {
+         alert("Этот студент относится к четвертой категории стипендии");
+      } else if (resultGrade >= 3.5 && resultGrade <= 4.0 && zero <= 1) {
+         alert("Этот студент относится к третий категории стипендии");
+      } else if (resultGrade >= 4.0 && resultGrade <= 4.5 && zero <= 1) {
+        alert("Этот студент относится к второй категории стипендии")
+       } else if (resultGrade >= 4.5 && resultGrade <= 5.0 && zero <= 1) {
+        alert("Этот студент относится к первой категории стипендии");
+      } else {
+        alert("Для этого студента нельзя оформить стипендию");
+      }
+      console.log('=>', countGrade, zero, one, sumGrade / countGrade);
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  function result() { 
+    get(fio);
+  }
+  
+  //--------------------------------------------------------------------------
+  
+  // Нажмите, чтобы узнать, какой тип стипендии получает этот студент
+  const show = async (fio) => {
+    try {
+      const response = await fetch(`http://localhost:8080/get/students/subjects`, {
+        method: 'GET'
+      })
+      const responseJson = await response.json();
+      let tableBody = document.getElementById("tableBody");
+      const data = responseJson.msg;
+      sumGrade = 0;
+      zero = 0;
+      one = 0, countGrade = 0;
+      res = 0;
+      data.forEach((subject) => {
+        if (subject.fio === fio) {
+          if (subject.grade > 1) {
+            sumGrade += subject.grade;
+            countGrade++;
+          } else if (subject.grade === 0) {
+            zero++;
+          } else {
+            one++;
+          } 
+        }
+      })
+      var resultGrade = sumGrade / countGrade;
+
+      if (resultGrade >= 3 && resultGrade <= 3.5 && zero === 0) {
+        updateCategory(fio, 1);
+      } else if (resultGrade >= 3.5 && resultGrade <= 4.0 && zero <= 1) {
+        updateCategory(fio, 2);
+      } else if (resultGrade >= 4.0 && resultGrade <= 4.5 && zero <= 1) {
+        updateCategory(fio, 3);
+       } else if (resultGrade >= 4.5 && resultGrade <= 5.0 && zero <= 1) {
+        updateCategory(fio, 4);
+      } else {
+        updateCategory(fio, 5);
+      }
+      console.log('=>', countGrade, zero, one, sumGrade / countGrade);
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+const updateCategory = async (fio, category) => {
+    try {
+      const response = await fetch(`http://localhost:8080/update/student/byfio?fio=${fio}&scholarship=${category}`, {
+        method: 'PUT'
+      })
+      const responseJson = await response.json();
+            } catch (e) { 
+      console.log(e) 
+    }
+    location.href = 'index.html'; 
+}
+
+
+function showResult() { 
+  show(fio);
+  
+}
+
+</script>
+
+
+</html>
